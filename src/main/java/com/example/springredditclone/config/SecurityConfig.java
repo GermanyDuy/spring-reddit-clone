@@ -14,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.example.springredditclone.security.JwtAuthenticationFilter;
+
 
 
 @EnableWebSecurity//Main annotation enable web security for our backend
@@ -21,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Load user data from different sources (DB))
     /*2*/private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     /*3*///and back to AuthService to impl login
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -39,6 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .anyRequest()
                 .authenticated();
+        /*3*/
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class);
     }
             /*2*
             the first thing we need to do is to update our security config, we have to create authentication manager

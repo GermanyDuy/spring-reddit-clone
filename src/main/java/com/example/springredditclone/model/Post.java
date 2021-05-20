@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Data
@@ -20,7 +21,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 public class Post {
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = IDENTITY)
     private Long postId;
     @NotBlank(message = "Post Name cannot be empty or Null")
     private String postName;
@@ -29,7 +30,7 @@ public class Post {
     @Nullable
     @Lob
     private String description;
-    private Integer voteCount;
+    private Integer voteCount = 0;
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;

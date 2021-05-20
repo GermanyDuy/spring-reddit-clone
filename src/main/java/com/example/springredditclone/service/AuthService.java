@@ -26,6 +26,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ import java.util.UUID;
 @Service
 /*4*/
 @AllArgsConstructor
+@Transactional
 
 public class AuthService {
     /*Using autowired not rcm bc we are using field injection here
@@ -98,7 +100,13 @@ public class AuthService {
         verificationTokenRepository.save(verificationToken);
         return token;
     }
-
+    @Transactional
+    public User getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
+    }
     /*7*/
     public void verifyAccount(String token) throws SpringRedditException {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
